@@ -1,7 +1,7 @@
-module Program.Program(solutions, solutions', solutions'') where 
+module Program.Program where 
 
 import Program.Operations
-import Data.List (subsequences, permutations, delete, minimum, sortBy)
+import Data.List
 
 {- THE COUNTDOWN SOLVER -}
 
@@ -32,7 +32,7 @@ choices xs = [ cs | ss <- subs xs
                   , cs <- perms ss]
 
 isChoice :: [Int] -> [Int] -> Bool 
-isChoice [] ns = True 
+isChoice [] _ = True 
 isChoice (x:xs) ns 
     | x `elem` ns = isChoice xs (delete x ns)
     | otherwise = False
@@ -84,10 +84,10 @@ combine' (l, x) (r, y) = [(App o l r, apply o x y) | o <- ops
 results :: [Int] -> [Result]
 results [] = []
 results [x] = [(Val x, x) | x > 0]
-results xs = [ r | (ls, rs) <- split xs
+results xs = [ r' | (ls, rs) <- split xs
                       , l <- results ls 
                       , r <- results rs 
-                      , r <- combine' l r ]
+                      , r' <- combine' l r ]
 
 -- calculate distance between values
 diff :: Int -> Int -> Int 
@@ -100,7 +100,7 @@ solutions' ns n = [ e | ns' <- choices ns
 
 simpScore :: Expr -> Int 
 simpScore (Val _) = 1
-simpScore (App o l r) = 1 + simpScore l + simpScore r
+simpScore (App _ l r) = 1 + simpScore l + simpScore r
 
 sortBySimp :: [Expr] -> [Expr]
 sortBySimp = sortBy (\l r -> compare (simpScore l) (simpScore r)) 
@@ -109,11 +109,11 @@ sortBySimp = sortBy (\l r -> compare (simpScore l) (simpScore r))
 solutions'' :: [Int] -> Int -> [Expr] 
 solutions'' ns n = case s of 
     [] -> 
-        let all = [ (e, diff v n) | ns' <- choices ns 
+        let allSols = [ (e, diff v n) | ns' <- choices ns 
                                   , (e, v) <- results ns' ]
-            min = minimum (map snd all)
-        in sortBySimp [ e | (e, d) <- all 
-                          , d == min ]
+            minDiff = minimum (map snd allSols)
+        in sortBySimp [ e | (e, d) <- allSols 
+                          , d == minDiff ]
     _ -> sortBySimp s
     where s = solutions' ns n
 

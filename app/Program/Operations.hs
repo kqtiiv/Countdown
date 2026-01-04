@@ -30,6 +30,7 @@ apply Add x y = x + y
 apply Sub x y = x - y 
 apply Mul x y = x * y 
 apply Div x y = x `div` y 
+apply Exp x y = x ^ y
 
 -- return a list of values in an expression 
 values :: Expr -> [Int] 

@@ -57,13 +57,13 @@ common common-settings
     -- Base language which the package is written in.
     default-language: GHC2021
     -- The range of GHC base library verisons that are supported
-    build-depends:    base ^>=4.18.3.0
+    build-depends:    base ^>=4.18.3.0, random
 
 library
     import:              common-settings
     exposed-modules:     Program.Program, Program.Operations, Main
     hs-source-dirs:      app 
-    build-depends:       base
+    build-depends:       base, random
 
 executable Countdown
     import:           common-settings
